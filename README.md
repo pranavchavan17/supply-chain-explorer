@@ -46,21 +46,29 @@ Warehouse
    │ LOCATED_IN
    ▼
 Region
+```
 
 Products are also connected to categories:
 
+```text
 Product
    │
    │ BELONGS_TO
    ▼
 Category
+```
 
 This graph structure allows the application to trace downstream impact through multiple relationships using Cypher queries.
 
-✨ Key Features
-Supplier Impact Analysis
+---
+
+## ✨ Key Features
+
+### Supplier Impact Analysis
+
 Analyze the downstream impact of a supplier across components, products, warehouses, and regions.
 
+```text
 Supplier
    ↓
 Component
@@ -70,11 +78,13 @@ Product
 Warehouse
    ↓
 Region
+```
 
+### Component Impact Analysis
 
-Component Impact Analysis
 Analyze how a component affects downstream products, warehouses, and regions.
 
+```text
 Component
    ↓
 Product
@@ -82,11 +92,13 @@ Product
 Warehouse
    ↓
 Region
+```
 
+### Why Is This Warehouse Affected?
 
-Why Is This Warehouse Affected?
 Given a supplier and warehouse, the application finds the graph path explaining their relationship.
 
+```text
 Supplier
    ↓
 Component
@@ -94,30 +106,42 @@ Component
 Product
    ↓
 Warehouse
+```
 
-High-Impact Supplier Analysis
+### High-Impact Supplier Analysis
+
 Identifies suppliers with larger downstream impact based on:
 
-Components affected
-Products affected
-Warehouses affected
+- Components affected
+- Products affected
+- Warehouses affected
 
-API Documentation
+### Swagger / OpenAPI Documentation
+
 Interactive API documentation is provided using Swagger/OpenAPI.
 
-Error Handling
-Centralized exception handling provides clean API responses for invalid suppliers, components, and warehouses.
+### Centralized Error Handling
 
-🕸️ Graph Data Model
-Nodes
+The backend provides structured error responses for invalid or missing resources.
+
+---
+
+## 🕸️ Graph Data Model
+
+### Nodes
+
+```text
 Supplier
 Component
 Product
 Warehouse
 Region
 Category
-Relationships
+```
 
+### Relationships
+
+```text
 Supplier ──SUPPLIES──> Component
 
 Component ──USED_IN──> Product
@@ -127,9 +151,13 @@ Product ──STORED_AT──> Warehouse
 Warehouse ──LOCATED_IN──> Region
 
 Product ──BELONGS_TO──> Category
+```
 
+---
 
-🏗️ Architecture
+## 🏗️ Architecture
+
+```text
               React Frontend
                     │
                   Axios
@@ -138,74 +166,124 @@ Product ──BELONGS_TO──> Category
             Spring Boot REST API
                     │
                     ▼
-                Services
+                 Services
                     │
+                    ▼
               Cypher Queries
                     │
                     ▼
-                 CognoDB
+                  CognoDB
                     │
                     ▼
              Supply Chain Graph
+```
 
-🔌 REST APIs
+---
+
+## 🔌 REST APIs
 
 Base URL:
 
+```text
 http://localhost:8080
-Supplier Impact
+```
+
+### Supplier Impact
+
+```http
 GET /api/supply-chain/suppliers/{supplierId}/impact
+```
 
 Example:
 
+```http
 GET /api/supply-chain/suppliers/SUP-001/impact
-Component Impact
+```
+
+### Component Impact
+
+```http
 GET /api/supply-chain/components/{componentId}/impact
+```
 
 Example:
 
+```http
 GET /api/supply-chain/components/CMP-001/impact
-Why Affected
+```
+
+### Why Affected
+
+```http
 GET /api/supply-chain/suppliers/{supplierId}/warehouses/{warehouseId}/why-affected
+```
 
 Example:
 
+```http
 GET /api/supply-chain/suppliers/SUP-001/warehouses/WH-001/why-affected
-High-Impact Suppliers
+```
+
+### High-Impact Suppliers
+
+```http
 GET /api/supply-chain/suppliers/high-impact
+```
 
+---
 
-📸 Screenshots
-Dashboard
-Supplier Impact
-Component Impact
-Why Affected
+## 📸 Screenshots
 
-🛠️ Technology Stack
-Backend
-Java 21
-Spring Boot
-Spring Web MVC
-Maven
-CognoDB
-Cypher
-Swagger / OpenAPI
+### Dashboard
 
-Frontend
+![Dashboard](screenshots/dashboard.png)
 
-React
-Vite
-JavaScript
-Axios
-React Router
-Tools
-IntelliJ IDEA
-Postman
-Git
-GitHub
+### Supplier Impact
 
+![Supplier Impact](screenshots/supplier-impact.png)
 
-📁 Project Structure
+### Component Impact
+
+![Component Impact](screenshots/component-impact.png)
+
+### Why Affected
+
+![Why Affected](screenshots/why-affected.png)
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend
+
+- Java 21
+- Spring Boot
+- Spring Web
+- Maven
+- CognoDB
+- Cypher
+- Swagger / OpenAPI
+
+### Frontend
+
+- React
+- Vite
+- JavaScript
+- Axios
+- React Router
+
+### Tools
+
+- IntelliJ IDEA
+- Postman
+- Git
+- GitHub
+
+---
+
+## 📁 Project Structure
+
+```text
 supply-chain-explorer/
 │
 ├── src/
@@ -238,59 +316,89 @@ supply-chain-explorer/
 ├── pom.xml
 ├── README.md
 └── .gitignore
+```
 
+---
 
-⚙️ Environment Variables
+## ⚙️ Environment Variables
+
 Database credentials are not stored directly in the source code.
-Configure:
 
+Configure the following environment variables:
+
+```text
 COGNODB_URI
 COGNODB_USERNAME
 COGNODB_PASSWORD
+```
 
 The backend uses:
 
+```properties
 cognodb.uri=${COGNODB_URI}
 cognodb.username=${COGNODB_USERNAME}
 cognodb.password=${COGNODB_PASSWORD}
+```
 
-Never commit actual database credentials to GitHub.
+**Never commit actual database credentials to GitHub.**
 
-▶️ How to Run
-Backend
+---
+
+## ▶️ How to Run
+
+### Backend
 
 From the project root:
 
+```powershell
 .\mvnw.cmd spring-boot:run
+```
 
 Backend:
 
+```text
 http://localhost:8080
-Frontend
+```
+
+### Frontend
 
 Open another terminal:
 
+```powershell
 cd frontend
 npm install
 npm run dev
+```
 
 Frontend:
 
+```text
 http://localhost:5173
+```
 
-Both the backend and frontend should be running for the complete application.
+Run both the backend and frontend to use the complete application.
 
-📖 Swagger / OpenAPI
+---
+
+## 📖 Swagger / OpenAPI
 
 After starting the backend, open:
 
+```text
 http://localhost:8080/swagger-ui/index.html
+```
 
-The OpenAPI specification is available at:
+OpenAPI specification:
 
+```text
 http://localhost:8080/v3/api-docs
+```
 
-🔄 Application Flow
+---
+
+## 🔄 Application Flow
+
+```text
 User selects a supplier/component
               ↓
         React Frontend
@@ -299,61 +407,56 @@ User selects a supplier/component
               ↓
       Spring Boot REST API
               ↓
-       Business Service
+           Service
               ↓
         Cypher Query
               ↓
             CognoDB
               ↓
-      Graph relationships
+      Graph Relationships
               ↓
-        Impact analysis
+        Impact Analysis
               ↓
-        React UI result
+        React UI Result
+```
 
+---
 
-🎯 What This Project Demonstrates
-Graph database modeling
-Cypher query development
-Relationship-based impact analysis
-Spring Boot REST API development
-React frontend development
-Full-stack API integration
-Centralized exception handling
-Swagger/OpenAPI documentation
-Environment-based configuration
-Git and GitHub workflow
+## 🎯 What This Project Demonstrates
 
+- Graph database modeling
+- Cypher query development
+- Relationship-based impact analysis
+- Spring Boot REST API development
+- React frontend development
+- Full-stack API integration
+- Centralized exception handling
+- Swagger/OpenAPI documentation
+- Environment-based configuration
+- Git and GitHub workflow
 
-🔮 Future Scope
-Possible future improvements:
+---
 
-Advanced graph visualization
-Real-time supply chain data
-Supplier risk scoring
-Historical impact analysis
-Supply chain disruption alerts
-AI-assisted impact explanations
-Production deployment
+## 🔮 Future Scope
 
+- Advanced graph visualization
+- Real-time supply chain data
+- Supplier risk scoring
+- Historical impact analysis
+- Supply chain disruption alerts
+- AI-assisted impact explanations
+- Production deployment
 
-👨‍💻 Author
-Pranav Chavan
+---
+
+## 👨‍💻 Author
+
+**Pranav Chavan**
+
 B.Tech Computer Science Engineering
 
-📄 License
+---
+
+## 📄 License
+
 This project was developed for educational, assessment, and portfolio purposes.
-
-
-### Do only this now
-
-Replace your current `README.md` with the above.
-
-Then create:
-
-```text
-screenshots/
-├── dashboard.png
-├── supplier-impact.png
-├── component-impact.png
-└── why-affected.png

@@ -26,7 +26,7 @@ export function getApiErrorMessage(error, fallbackMessage = 'Something went wron
   }
 
   if (error?.message === 'Network Error' || !error?.response) {
-    return 'Unable to reach the backend. Make sure the Spring Boot app is running on port 8080.';
+      return 'Unable to reach the backend. Please try again later.';
   }
 
   return fallbackMessage;

@@ -7,10 +7,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "https://supply-chain-explorer-1.onrender.com")
 @RestController
 @RequestMapping("/api/supply-chain")
 @Tag(

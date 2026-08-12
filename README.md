@@ -62,6 +62,29 @@ This graph structure allows the application to trace downstream impact through m
 
 ---
 
+## 🤔 Why a Graph Database?
+
+A graph database is a natural fit for Supply Chain Explorer because the main problem is understanding relationships and dependencies between suppliers, components, products, warehouses, and regions.
+
+In a relational database, finding the complete downstream impact of a supplier can require multiple JOIN operations across several tables.
+
+With CognoDB, these relationships are represented directly as graph relationships, making multi-hop traversal straightforward:
+
+```text
+Supplier → Component → Product → Warehouse → Region
+```
+
+This allows the application to answer relationship-based questions such as:
+
+- Which products depend on a supplier?
+- Which warehouses may be affected?
+- Which regions are impacted?
+- Why is a particular warehouse affected?
+
+The graph model also makes it easier to extend the supply chain with additional entities and relationships.
+
+---
+
 ## ✨ Key Features
 
 ### Supplier Impact Analysis
@@ -182,7 +205,13 @@ Product ──BELONGS_TO──> Category
 
 ## 🔌 REST APIs
 
-Base URL:
+### Production Backend
+
+```text
+https://supply-chain-explorer.onrender.com
+```
+
+### Local Backend
 
 ```text
 http://localhost:8080
@@ -198,6 +227,12 @@ Example:
 
 ```http
 GET /api/supply-chain/suppliers/SUP-001/impact
+```
+
+Production example:
+
+```text
+https://supply-chain-explorer.onrender.com/api/supply-chain/suppliers/SUP-001/impact
 ```
 
 ### Component Impact
@@ -279,6 +314,10 @@ GET /api/supply-chain/suppliers/high-impact
 - Git
 - GitHub
 
+### Deployment
+
+- Render
+
 ---
 
 ## 📁 Project Structure
@@ -290,14 +329,14 @@ supply-chain-explorer/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── com/supplychain/explorer/
-│   │   │       ├── config/
-│   │   │       ├── controller/
-│   │   │       ├── exception/
-│   │   │       └── service/
-│   │   │
-│   │   └── resources/
-│   │       └── application.properties
+│   │       ├── config/
+│   │       ├── controller/
+│   │       ├── exception/
+│   │       └── service/
 │   │
+│   └── resources/
+│       └── application.properties
+│
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -340,7 +379,104 @@ cognodb.username=${COGNODB_USERNAME}
 cognodb.password=${COGNODB_PASSWORD}
 ```
 
+### Creating a CognoDB Instance
+
+1. Create a CognoDB Cloud account.
+2. Create a free `c0` instance and select a region.
+3. Copy the generated connection URI.
+4. Save the generated password for the `cognodb` user.
+5. Configure the connection details using environment variables.
+
+Example:
+
+```text
+COGNODB_URI=bolt+s://<instance-id>.databases.cognodb.cloud
+COGNODB_USERNAME=cognodb
+COGNODB_PASSWORD=<your-password>
+```
+
 **Never commit actual database credentials to GitHub.**
+
+---
+
+## 🌱 Seed Data
+
+The application includes seed data representing a connected supply chain containing:
+
+- Suppliers
+- Components
+- Products
+- Warehouses
+- Regions
+- Categories
+
+The seed data establishes the relationships required for supplier impact, component impact, warehouse impact path, and high-impact supplier analysis.
+
+---
+
+## 🔍 Main Cypher Queries
+
+The application uses parameterized Cypher queries to traverse the supply chain graph.
+
+### Supplier Impact Query
+
+The supplier impact analysis starts from a supplier and follows downstream relationships:
+
+```text
+Supplier
+   ↓ SUPPLIES
+Component
+   ↓ USED_IN
+Product
+   ↓ STORED_AT
+Warehouse
+   ↓ LOCATED_IN
+Region
+```
+
+This multi-hop traversal identifies the components, products, warehouses, and regions that may be affected by a supplier.
+
+### Component Impact Query
+
+The component impact analysis starts from a component and traverses downstream dependencies:
+
+```text
+Component
+   ↓ USED_IN
+Product
+   ↓ STORED_AT
+Warehouse
+   ↓ LOCATED_IN
+Region
+```
+
+This identifies the products, warehouses, and regions that depend on the selected component.
+
+### Warehouse Impact Path Query
+
+The warehouse impact analysis finds the relationship path connecting a supplier to a selected warehouse:
+
+```text
+Supplier
+   ↓ SUPPLIES
+Component
+   ↓ USED_IN
+Product
+   ↓ STORED_AT
+Warehouse
+```
+
+The returned path is displayed in the React frontend to explain why the selected warehouse is affected.
+
+### High-Impact Supplier Query
+
+The high-impact supplier analysis identifies suppliers with greater downstream impact based on their connected:
+
+- Components
+- Products
+- Warehouses
+
+All user-provided identifiers are passed as parameters rather than being concatenated directly into Cypher queries.
 
 ---
 
@@ -380,7 +516,27 @@ Run both the backend and frontend to use the complete application.
 
 ---
 
+## 🌐 Deployed Application
+
+### Backend
+
+```text
+https://supply-chain-explorer.onrender.com
+```
+
+### Production API Example
+
+```text
+https://supply-chain-explorer.onrender.com/api/supply-chain/suppliers/SUP-001/impact
+```
+
+The backend is deployed and accessible through the production REST API.
+
+---
+
 ## 📖 Swagger / OpenAPI
+
+Swagger/OpenAPI documentation is available when running the backend locally.
 
 After starting the backend, open:
 
@@ -393,6 +549,8 @@ OpenAPI specification:
 ```text
 http://localhost:8080/v3/api-docs
 ```
+
+> Note: Swagger is included as part of the backend documentation, while the deployed application is primarily demonstrated through the REST APIs and React frontend.
 
 ---
 
@@ -426,6 +584,7 @@ User selects a supplier/component
 
 - Graph database modeling
 - Cypher query development
+- Multi-hop relationship traversal
 - Relationship-based impact analysis
 - Spring Boot REST API development
 - React frontend development
@@ -434,6 +593,8 @@ User selects a supplier/component
 - Swagger/OpenAPI documentation
 - Environment-based configuration
 - Git and GitHub workflow
+- Backend deployment
+- REST API integration with a deployed frontend
 
 ---
 
@@ -445,7 +606,7 @@ User selects a supplier/component
 - Historical impact analysis
 - Supply chain disruption alerts
 - AI-assisted impact explanations
-- Production deployment
+- Further production deployment improvements
 
 ---
 
